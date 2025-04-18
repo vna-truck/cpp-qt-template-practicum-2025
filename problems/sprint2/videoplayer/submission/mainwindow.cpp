@@ -8,25 +8,29 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , audio_output_(new QAudioOutput(this))
+
 {
     ui->setupUi(this);
 
     // Присоедините аудио и видеовыходы к плееру.
+    // 1. Подключаем аудиовыход к плееру
+    player_.setAudioOutput(&audio_output_);
+    // 2. Подключаем видеовыход к плееру
+    player_.setVideoOutput(ui->video_output);
 
     connect(&player_, &prac::QMediaPlayer::positionChanged, this, &MainWindow::on_position_changed);
     connect(&player_, &prac::QMediaPlayer::mediaStatusChanged, this, &MainWindow::on_media_status_changed);
     connect(&player_, &prac::QMediaPlayer::playbackStateChanged, this, &MainWindow::on_playback_state_changed);
-    connect(ui->sld_pos, &QSlider::sliderMoved, this, &MainWindow::on_sld_pos_valueChanged);
-    // connect(ui->sld_pos, &QSlider::sliderPressed, this, &MainWindow::is_position_changing);
+    connect(ui->sld_pos, &QSlider::valueChanged, this, &MainWindow::on_sld_pos_valueChanged);
     audio_output_.setVolume(1.f);
 }
 
 void MainWindow::on_position_changed(qint64 position) {
     // Реализуем перемещеине ползунка во время проигрывания файла.
-    if(!position_changing_) {
+    position_changing_ = true;
     ui->sld_pos->setValue(position);
-    }
+    position_changing_ = false;
+
 }
 
 void MainWindow::on_media_status_changed(QMediaPlayer::MediaStatus) {
@@ -78,28 +82,16 @@ void MainWindow::on_sld_volume_valueChanged(int value)
         float volume = qBound(0.0f, value / 100.0f, 1.0f);  // Ограничение 0-1
         player_.audioOutput()->setVolume(volume);
     }
-    // audio_output_.setVolume(value/100);
 }
 
 void MainWindow::on_sld_pos_valueChanged(int value)
 {
     //перемещение ползунка и перемонтка файла
+    if(!position_changing_){
+    player_.setPosition(value);
 
-    if (ui->sld_pos->isSliderDown()) {  // Если ползунок двигается
-        position_changing_ = true;
-        player_.setPosition(value);
-
-    } else {  // Если изменение вызвано программно
-        position_changing_ = false;
-    }
-
-
+   }
 }
-
-// void MainWindow::is_position_changing()
-// {
-//     position_changing_ = true;
-// }
 
 MainWindow::~MainWindow()
 {

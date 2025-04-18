@@ -30,7 +30,6 @@ private slots:
     void on_sld_volume_valueChanged(int value);
 
     void on_sld_pos_valueChanged(int value);
-    // void is_position_changing();
 private:
     Ui::MainWindow *ui;
     prac::QMediaPlayer player_{this};
