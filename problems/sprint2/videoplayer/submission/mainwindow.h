@@ -30,11 +30,14 @@ private slots:
     void on_sld_volume_valueChanged(int value);
 
     void on_sld_pos_valueChanged(int value);
-
+    // void is_position_changing();
 private:
     Ui::MainWindow *ui;
     prac::QMediaPlayer player_{this};
     QAudioOutput audio_output_{this};
     bool position_changing_ = false;
+    QString file_adress_;
+    bool play_is_on_;
+
 };
 #endif // MAINWINDOW_H

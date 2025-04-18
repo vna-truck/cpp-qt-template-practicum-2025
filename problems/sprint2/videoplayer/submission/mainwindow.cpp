@@ -2,10 +2,13 @@
 #include "ui_mainwindow.h"
 
 #include <prac/QFileDialog>
+#include <prac/QMediaPlayer>
+#include <QAudioOutput>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , audio_output_(new QAudioOutput(this))
 {
     ui->setupUi(this);
 
@@ -14,41 +17,89 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&player_, &prac::QMediaPlayer::positionChanged, this, &MainWindow::on_position_changed);
     connect(&player_, &prac::QMediaPlayer::mediaStatusChanged, this, &MainWindow::on_media_status_changed);
     connect(&player_, &prac::QMediaPlayer::playbackStateChanged, this, &MainWindow::on_playback_state_changed);
-
+    connect(ui->sld_pos, &QSlider::sliderMoved, this, &MainWindow::on_sld_pos_valueChanged);
+    // connect(ui->sld_pos, &QSlider::sliderPressed, this, &MainWindow::is_position_changing);
     audio_output_.setVolume(1.f);
 }
 
 void MainWindow::on_position_changed(qint64 position) {
-    // Реализуйте обработку сигнала.
+    // Реализуем перемещеине ползунка во время проигрывания файла.
+    if(!position_changing_) {
+    ui->sld_pos->setValue(position);
+    }
 }
 
 void MainWindow::on_media_status_changed(QMediaPlayer::MediaStatus) {
-    // Реализуйте обработку сигнала.
+    // Устанавливаем максимальное значение продолжительности файла
+    ui->sld_pos->setMaximum(player_.duration());
 }
 
 void MainWindow::on_playback_state_changed(QMediaPlayer::PlaybackState new_state) {
-    // Реализуйте обработку сигнала.
+    if(player_.playbackState() == QMediaPlayer::PlaybackState::PlayingState) {
+        ui->btn_pause->setText("⏵");
+    }else{
+        ui->btn_pause->setText("⏸");
+    }
 }
 
 void MainWindow::on_btn_choose_clicked()
 {
-    // Реализуйте обработку сигнала.
+    // загрузка видео из папки
+    file_adress_ = prac::QFileDialog::getOpenFileName(this,
+                                                      QString::fromUtf8("Открыть файл"),
+                                                      "C:/Users/alexs/Videos",
+                                                      "*.mov;*.mkv");
+    player_.setSource(QUrl::fromLocalFile(file_adress_));
+    player_.setAudioOutput(&audio_output_);
+    player_.setVideoOutput(ui->video_output);
+    audio_output_.setVolume(0.5);  // Громкость 0-1
+    player_.play();
+
 }
 
 void MainWindow::on_btn_pause_clicked()
 {
-    // Реализуйте обработку сигнала.
+    // кнопка паузы
+    if(player_.playbackState() == QMediaPlayer::PlaybackState::PlayingState) {
+        player_.pause();
+    }else if(player_.playbackState() == QMediaPlayer::PlaybackState::StoppedState) {
+        //тут надо установить указатель на 0
+        player_.setPosition(0);
+        player_.play();
+    }else{
+        player_.play();
+    }
 }
 
 void MainWindow::on_sld_volume_valueChanged(int value)
 {
-    // Реализуйте обработку сигнала.
+    // громкость.
+    if (player_.audioOutput()) {  // Проверяем, подключен ли аудиовыход
+        float volume = qBound(0.0f, value / 100.0f, 1.0f);  // Ограничение 0-1
+        player_.audioOutput()->setVolume(volume);
+    }
+    // audio_output_.setVolume(value/100);
 }
 
 void MainWindow::on_sld_pos_valueChanged(int value)
 {
-    // Реализуйте обработку сигнала.
+    //перемещение ползунка и перемонтка файла
+
+    if (ui->sld_pos->isSliderDown()) {  // Если ползунок двигается
+        position_changing_ = true;
+        player_.setPosition(value);
+
+    } else {  // Если изменение вызвано программно
+        position_changing_ = false;
+    }
+
+
 }
+
+// void MainWindow::is_position_changing()
+// {
+//     position_changing_ = true;
+// }
 
 MainWindow::~MainWindow()
 {
