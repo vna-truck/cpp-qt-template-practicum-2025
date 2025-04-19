@@ -26,7 +26,13 @@ public:
 private slots:
     // Тут объявите слоты.
 
+    void OnTimer();
+    void on_pb_start_stop_clicked();
+
+    void GetAlarmTime();
 private:
     Ui::MainWindow *ui;
     QDateTime alarm_moment_;
+    prac::QTimer timer_one_sec_{this};
+    bool start_button_state_ = false;
 };
