@@ -55,12 +55,17 @@ public:
     void Draw(prac::QPainter& painter) const {
         // 1. Установите перо в painter. Нужно использовать цвет
         //    снежинки и толщину линии из переменной класса params_.
-        //
+        QPen pen(params_.color);
+        pen.setWidthF(params_.line_width);
+        painter.setPen(pen);
         // 2. Разместите здесь код для рисования шести лучей на основе
         //    переменной params_ и метода DrawRotatedVector.
         //    Учтите центр снежинки – params_.center, длину вектора –
         //    params_.size.
-        //
+        for (int i = 0; i < 6; ++i) {
+            double angle = params_.rotation + 60 * i;
+            DrawRotatedVector(painter, params_.center, angle, params_.size);
+        }
         //    В качестве параметра angle передавайте угол, который должен
         //    быть разным для каждого луча. Используйте такие углы:
         //    params_.rotation + 60 * 0
@@ -85,7 +90,7 @@ private:
 
         // Нарисуйте линию от точки center до точки end.
         // Используйте метод drawLine класса painter.
-
+        painter.drawLine(QPointF(center.x, center.y), QPointF(end.x, end.y));
         return end;
     }
 
