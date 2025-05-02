@@ -45,6 +45,8 @@ struct SnowFlakeParams {
     double size;
     double line_width;
     double rotation;
+    int depth;
+    double scale_factor;
 };
 
 class SnowFlake {
@@ -65,7 +67,13 @@ public:
         //    params_.size.
         for (int i = 0; i < 6; ++i) {
             double angle = params_.rotation + 60 * i;
-            DrawRotatedVector(painter, params_.center, angle, params_.size);
+            // DrawRotatedVector(painter, params_.center, angle, params_.size);
+            Point2D end = DrawRotatedVector(painter, params_.center, angle, params_.size);
+            if (params_.depth > 0 && params_.scale_factor > 0) {
+                // SnowFlake next_flake = GetNextLevelFlake(DrawRotatedVector(painter, params_.center, angle, params_.size));
+                SnowFlake next_flake = GetNextLevelFlake(end);
+                next_flake.Draw(painter);
+            }
         }
         //    В качестве параметра angle передавайте угол, который должен
         //    быть разным для каждого луча. Используйте такие углы:
@@ -75,13 +83,28 @@ public:
         //    ...
         //    params_.rotation + 60 * 5
         //    Вызывайте DrawRotatedVector в цикле, делающем шесть итераций.
+
     }
 
+    //Вывод информации о параметрах на экран
     QString GetDescription() const {
-        return QString("Размер %1\nТолщина линии %2\nПоворот %3")
+        return QString("Размер %1\nТолщина линии %2\nПоворот %3\nМножитель %4")
             .arg(params_.size)
             .arg(params_.line_width)
-            .arg(params_.rotation);
+            .arg(params_.rotation)
+            .arg(params_.scale_factor);
+    }
+
+    SnowFlake GetNextLevelFlake(Point2D new_center) const {
+        return SnowFlakeParams{
+            .center = new_center,
+            .color = params_.color,
+            .size = params_.size * params_.scale_factor,
+            .line_width = params_.line_width,
+            .rotation = params_.rotation,
+            .depth = params_.depth - 1,
+            .scale_factor = params_.scale_factor,
+        };
     }
 
 private:

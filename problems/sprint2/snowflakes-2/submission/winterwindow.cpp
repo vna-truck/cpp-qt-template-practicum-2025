@@ -22,18 +22,25 @@ void WinterWindow::paintEvent(QPaintEvent *event) {
     prac::QPainter painter(this);
     painter.setPen(Qt::black);
     double size = double(ui->sld_size->value());
+    // ui->spin_depth->setMaximum(5);  // Максимальное значение 5
+    ui->sld_factor->setMaximum(100);  // Максимальное значение 100
 
     SnowFlakeParams flake_params{
-        flake_params.center = {width() / 2., height() / 2.},
-        flake_params.color = color_,
-        flake_params.size = size,
-        flake_params.line_width = ui->sld_line->value() / 15.,
-        flake_params.rotation = double(ui->sld_rotation->value())
+        .center = {width() / 2., height() / 2.},
+        .color = color_,
+        .size = size,
+        .line_width = ui->sld_line->value() / 15.,
+        .rotation = double(ui->sld_rotation->value()),
+        .depth = ui->spin_depth->value(),
+        .scale_factor = ui->sld_factor->value() / double(ui->sld_factor->maximum())
     };
+
+
 
     // Создайте снежинку (объект класса SnowFlake) и нарисуйте её методом Draw.
     SnowFlake snowflake(flake_params);
     snowflake.Draw(painter);
+
 
     QRect rect(10, 10, width() - 20, height() - 20);
 

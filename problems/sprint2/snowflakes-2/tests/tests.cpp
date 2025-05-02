@@ -243,7 +243,10 @@ void TestYourApp::ValidateSnowflake()
 
     LineSet set(1e-5, 0.1);
     set.Set(prac::QPainter::lines.begin(), prac::QPainter::lines.end());
-
+    qDebug() << "Actual lines:" << prac::QPainter::lines.size();
+    qDebug() << "Expected lines:" << expected_lines.size();
+    qDebug() << "Actual depth:" << depth;
+    qDebug() << "Actual factor:" << factor;
     QVERIFY2(prac::QPainter::lines.size() == expected_lines.size(), "Количество линий, которые были нарисовано, не совпадает с ожидаемым");
     for (const auto& line: expected_lines)
     {

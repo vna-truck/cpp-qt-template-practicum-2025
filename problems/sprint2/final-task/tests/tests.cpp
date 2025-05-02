@@ -185,6 +185,9 @@ void TestYourApp::checkLabels(
     auto result = l_result->text();
     auto formula = l_formula->text();
 
+    qDebug() << "l_result expected: " << expected_result;
+    qDebug() << "l_result real: " << result;
+
     QVERIFY2(memory == expected_memory, "Текст l_memory не совпадает с ожидаемым");
     QVERIFY2(result == expected_result, "Teкст l_result не совпадает с ожидаемым");
     QVERIFY2(formula == expected_formula, "Текст l_formula не совпадает с ожидаемым");

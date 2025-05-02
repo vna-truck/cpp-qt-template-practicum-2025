@@ -17,6 +17,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -35,6 +36,10 @@ public:
     QSlider *sld_line;
     QLabel *label_5;
     QSlider *sld_rotation;
+    QLabel *label_3;
+    QSlider *sld_factor;
+    QLabel *label_4;
+    QSpinBox *spin_depth;
     QPushButton *btn_color;
 
     void setupUi(QMainWindow *WinterWindow)
@@ -125,6 +130,32 @@ public:
 
         horizontalLayout->addWidget(sld_rotation);
 
+        label_3 = new QLabel(centralwidget);
+        label_3->setObjectName("label_3");
+
+        horizontalLayout->addWidget(label_3);
+
+        sld_factor = new QSlider(centralwidget);
+        sld_factor->setObjectName("sld_factor");
+        sld_factor->setMinimum(0);
+        sld_factor->setMaximum(100);
+        sld_factor->setValue(50);
+        sld_factor->setOrientation(Qt::Horizontal);
+
+        horizontalLayout->addWidget(sld_factor);
+
+        label_4 = new QLabel(centralwidget);
+        label_4->setObjectName("label_4");
+
+        horizontalLayout->addWidget(label_4);
+
+        spin_depth = new QSpinBox(centralwidget);
+        spin_depth->setObjectName("spin_depth");
+        spin_depth->setMinimum(0);
+        spin_depth->setMaximum(5);
+
+        horizontalLayout->addWidget(spin_depth);
+
         btn_color = new QPushButton(centralwidget);
         btn_color->setObjectName("btn_color");
 
@@ -139,6 +170,8 @@ public:
         QObject::connect(sld_line, &QSlider::valueChanged, WinterWindow, qOverload<>(&QMainWindow::repaint));
         QObject::connect(sld_rotation, &QSlider::valueChanged, WinterWindow, qOverload<>(&QMainWindow::repaint));
         QObject::connect(sld_size, &QSlider::valueChanged, WinterWindow, qOverload<>(&QMainWindow::repaint));
+        QObject::connect(sld_factor, &QSlider::valueChanged, WinterWindow, qOverload<>(&QMainWindow::repaint));
+        QObject::connect(spin_depth, &QSpinBox::valueChanged, WinterWindow, qOverload<>(&QMainWindow::repaint));
 
         QMetaObject::connectSlotsByName(WinterWindow);
     } // setupUi
@@ -149,6 +182,8 @@ public:
         label_2->setText(QCoreApplication::translate("WinterWindow", "\320\240\320\260\320\267\320\274\320\265\321\200", nullptr));
         label->setText(QCoreApplication::translate("WinterWindow", "\320\242\320\276\320\273\321\211\320\270\320\275\320\260", nullptr));
         label_5->setText(QCoreApplication::translate("WinterWindow", "\320\222\321\200\320\260\321\211\320\265\320\275\320\270\320\265", nullptr));
+        label_3->setText(QCoreApplication::translate("WinterWindow", "\320\234\320\275\320\276\320\266\320\270\321\202\320\265\320\273\321\214", nullptr));
+        label_4->setText(QCoreApplication::translate("WinterWindow", "\320\223\320\273\321\203\320\261\320\270\320\275\320\260", nullptr));
         btn_color->setText(QCoreApplication::translate("WinterWindow", "\320\246\320\262\320\265\321\202", nullptr));
     } // retranslateUi
 
